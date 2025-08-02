@@ -1,3 +1,91 @@
+-- Intro com letras animadas, espaçadas, sem stroke e com gradiente fake
+local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
+local SoundService = game:GetService("SoundService")
+local Camera = workspace.CurrentCamera
+
+-- Blur Effect
+local blur = Instance.new("BlurEffect")
+blur.Size = 24
+blur.Parent = Lighting
+
+-- Som do Kaneki Ken
+local sound = Instance.new("Sound")
+sound.SoundId = "rbxassetid://123427955645512"
+sound.Volume = 3
+sound.PlayOnRemove = true
+sound.Parent = SoundService
+sound:Destroy()
+
+-- Tela da intro
+local introGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+introGui.IgnoreGuiInset = true
+introGui.ResetOnSpawn = false
+introGui.Name = "IntroGui"
+
+local container = Instance.new("Frame", introGui)
+container.Size = UDim2.new(1, 0, 1, 0)
+container.BackgroundTransparency = 1
+
+-- Texto
+local text = "Emperor Hub"
+local spacing = 55 -- MUITO espaço entre letras
+local startX = (Camera.ViewportSize.X / 2) - (#text * spacing / 2)
+
+-- Gradiente falso com tons de vermelho/escuro
+local gradientColors = {
+	Color3.fromRGB(200, 0, 0),
+	Color3.fromRGB(180, 0, 0),
+	Color3.fromRGB(160, 0, 0),
+	Color3.fromRGB(140, 0, 0),
+	Color3.fromRGB(120, 0, 0),
+	Color3.fromRGB(100, 0, 0),
+	Color3.fromRGB(120, 0, 0),
+	Color3.fromRGB(140, 0, 0),
+	Color3.fromRGB(160, 0, 0),
+	Color3.fromRGB(180, 0, 0),
+	Color3.fromRGB(200, 0, 0),
+}
+
+for i = 1, #text do
+	local char = text:sub(i, i)
+	local label = Instance.new("TextLabel")
+	label.Parent = container
+	label.Size = UDim2.new(0, 50, 0, 100)
+	label.Position = UDim2.new(0, startX + (i - 1) * spacing, 0.6, -20) -- mais pra baixo
+	label.AnchorPoint = Vector2.new(0, 0.5)
+	label.BackgroundTransparency = 1
+	label.Font = Enum.Font.LuckiestGuy
+	label.TextSize = 72
+	label.TextColor3 = gradientColors[i] or Color3.fromRGB(200, 0, 0)
+	label.Text = char
+	label.TextTransparency = 1
+
+	-- Animação Tween (mais lenta)
+	delay(i * 0.08, function()
+		TweenService:Create(label, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+			TextTransparency = 0
+		}):Play()
+	end)
+end
+
+wait(4)
+
+-- Fade out
+for _, label in pairs(container:GetChildren()) do
+	if label:IsA("TextLabel") then
+		TweenService:Create(label, TweenInfo.new(0.6), {
+			TextTransparency = 1
+		}):Play()
+	end
+end
+
+wait(0.7)
+introGui:Destroy()
+blur:Destroy()
+
+----- Emperor Hub aqui --------
+
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
